@@ -243,9 +243,9 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-269" />
-    <option name="y" value="22" />
+  <component name="ProjectFrameBounds" extendedState="7">
+    <option name="x" value="-65" />
+    <option name="y" value="14" />
     <option name="width" value="1918" />
     <option name="height" value="1038" />
   </component>
@@ -294,7 +294,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../dnsdb_project" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="settings.editor.selected.configurable" value="configurable.group.language" />
