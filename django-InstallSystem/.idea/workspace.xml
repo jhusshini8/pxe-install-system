@@ -3,9 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="1a29dba9-499c-4a5a-95af-6b3eb163cbea" name="默认的" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../vue-install-system/src/api/article.js" beforeDir="false" afterPath="$PROJECT_DIR$/../vue-install-system/src/api/article.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../vue-install-system/src/api/remote-search.js" beforeDir="false" afterPath="$PROJECT_DIR$/../vue-install-system/src/api/remote-search.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../vue-install-system/src/api/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/../vue-install-system/src/api/user.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -75,6 +72,7 @@
     <session id="1112180725">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
+          <entry key="project.closed" value="1" />
           <entry key="project.open.time.1" value="1" />
           <entry key="project.opened" value="1" />
         </counts>
@@ -95,8 +93,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/SystemProject/pxeviews/BeganSystem.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2223">
-              <caret line="117" column="41" lean-forward="true" selection-start-line="117" selection-start-column="41" selection-end-line="117" selection-end-column="41" />
+            <state relative-caret-position="285">
+              <caret line="132" column="76" selection-start-line="132" selection-start-column="70" selection-end-line="132" selection-end-column="76" />
               <folding>
                 <element signature="e#23#59#0" expanded="true" />
               </folding>
@@ -393,7 +391,7 @@
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
       <window_info anchor="bottom" id="Terminal" order="12" weight="0.32900432" />
       <window_info anchor="bottom" id="Python Console" order="13" weight="0.32900432" />
-      <window_info active="true" anchor="bottom" id="运行" order="14" visible="true" weight="0.3391116" />
+      <window_info anchor="bottom" id="运行" order="14" weight="0.3391116" />
       <window_info anchor="bottom" id="调试" order="15" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -570,8 +568,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/SystemProject/pxeviews/BeganSystem.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2223">
-          <caret line="117" column="41" lean-forward="true" selection-start-line="117" selection-start-column="41" selection-end-line="117" selection-end-column="41" />
+        <state relative-caret-position="285">
+          <caret line="132" column="76" selection-start-line="132" selection-start-column="70" selection-end-line="132" selection-end-column="76" />
           <folding>
             <element signature="e#23#59#0" expanded="true" />
           </folding>

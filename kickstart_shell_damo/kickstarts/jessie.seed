@@ -1,0 +1,105 @@
+d-i debian-installer/locale string en_US
+d-i console-keymaps-at/keymap select us
+d-i keyboard-configuration/xkb-keymap select us
+
+d-i netcfg/choose_interface select eth0
+d-i hw-detect/load_firmware boolean true
+d-i netcfg/link_detection_timeout string 30
+
+d-i netcfg/dhcp_timeout string 60
+d-i netcfg/dhcp_failed note
+d-i netcfg/dhcp_options select Configure network manually
+
+d-i netcfg/get_hostname string unassigned-hostname
+d-i netcfg/get_domain string jumei.com
+
+d-i mirror/country string manual
+d-i mirror/http/hostname string http://mirrors.tuna.tsinghua.edu.cn
+d-i mirror/http/directory string /debian
+d-i mirror/suite string jessie
+d-i mirror/udeb/suite jessie
+
+d-i passwd/root-login boolean true
+d-i passwd/root-password password jumeiops
+d-i passwd/root-password-again password jumeiops
+d-i passwd/root-login boolean yes
+d-i passwd/make-user boolean false
+d-i passwd/user-fullname string pingx
+d-i passwd/username string pingx
+d-i passwd/user-password password jumeiops
+d-i passwd/user-password-again password jumeiops
+
+d-i clock-setup/utc boolean true
+d-i time/zone string Asia/Shanghai
+d-i clock-setup/ntp boolean false
+
+d-i partman-lvm/device_remove_lvm                   boolean true
+d-i partman-auto/purge_lvm_from_device              boolean true
+d-i partman-md/device_remove_md                     boolean true
+d-i partman-lvm/confirm                             boolean true
+d-i partman/alignment                               select cylinder
+d-i partman/confirm                                 boolean true
+d-i partman-basicfilesystems/no_swap                  boolean false
+d-i partman-partitioning/confirm_write_new_label    boolean true
+d-i partman/choose_partition                        select finish
+d-i partman/confirm_nooverwrite                     boolean true
+d-i grub-installer/only_debian                      boolean true
+d-i grub-installer/bootdev                                      string /dev/sda
+d-i partman-auto/disk                               string /dev/sda
+d-i partman-auto/method                             string regular
+d-i partman-auto/expert_recipe string                         \
+      boot-root ::                                            \
+              100 50 100 free                                 \
+                          $gptonly{ }                         \
+                          $primary{ }                         \
+                          $bios_boot{ }                       \
+                          method{ biosgrub }                  \
+              .                                               \
+              500 50 500 ext4                                 \
+                      $primary{ } $bootable{ }                \
+                      method{ format } format{ }              \
+                      use_filesystem{ } filesystem{ ext2 }    \
+                      mountpoint{ /boot }                     \
+              .                                               \
+              500 10000 1000000000 ext4                       \
+                      $primary{ }                             \
+                      method{ format } format{ }              \
+                      use_filesystem{ } filesystem{ ext4 }    \
+                      mountpoint{ / }                         \
+              .                                               \
+              200% 500 200% Linux-swap                        \
+                      $primary{ }                             \
+                      method{ swap } format{ }                \
+              .
+
+d-i base-installer/install-recommends boolean false
+d-i base-installer/kernel/linux/initramfs-generators string initramfs-tools
+
+d-i apt-setup/non-free boolean true
+d-i apt-setup/contrib boolean false
+d-i apt-setup/use_mirror boolean true
+d-i apt-setup/services-select multiselect main
+
+d-i apt-setup/local1/repository string http://mirrors.tuna.tsinghua.edu.cn/debian jessie-backports main non-free
+d-i apt-setup/local1/comment string debian backports
+
+d-i apt-setup/local2/repository string http://mirrors.tuna.tsinghua.edu.cn/debian-security jessie/updates main non-free
+d-i apt-setup/local2/comment string debian security
+
+d-i debian-installer/allow_unauthenticated boolean true
+
+tasksel tasksel/first multiselect standard
+
+d-i pkgsel/include string vim openssh-server
+
+d-i pkgsel/upgrade select full-upgrade
+
+popularity-contest popularity-contest/participate boolean false
+
+d-i grub-installer/bootdev  string default
+d-i grub-installer/only_debian boolean true
+d-i finish-install/reboot_in_progress true
+
+d-i preseed/late_command string   wget -O /target/etc/apt/sources.list   http://$http_server/debian8.list ; \
+    wget -O /target/etc/default/debian8.sh http://$http_server/debian8.sh; \
+     wget -O /target/etc/rc.local http://$http_server/rc_debian8.local
