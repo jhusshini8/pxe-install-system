@@ -77,8 +77,8 @@ def GetLine(request):
     result["installcount"] = install_count
     result["succount"] = succe_count
     result["faildcount"] = faild_count
-    data_result['actualData'] = faild_list
-    data_result['expectedData'] = succ_list
+    data_result['actualData'] = succ_list
+    data_result['expectedData'] = faild_list
     result["newVisitis"] = data_result
     result["data"] = week_day
     return JsonResponse(result, safe=False)
