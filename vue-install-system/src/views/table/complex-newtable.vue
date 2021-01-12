@@ -63,7 +63,7 @@
           <span class="link-type">{{ row.title }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.readings')" width="200px" align="center">
+      <el-table-column :label="$t('table.readings')" width="250px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.versions }}</span>
         </template>
