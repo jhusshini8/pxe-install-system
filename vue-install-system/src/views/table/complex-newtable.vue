@@ -47,18 +47,18 @@
           <!--<span>{{ row.timestamp }}</span>-->
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.nodehostip')" min-width="120px"  align="center">
+      <el-table-column :label="$t('table.nodehostip')" min-width="120px" align="center">
         <template slot-scope="{row}">
           <span class="link-type">{{ row.nodeip }}</span>
           <!--<el-tag>{{ row.type | typeFilter }}</el-tag>-->
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.managerAdd')" min-width="120px"  align="center">
+      <el-table-column :label="$t('table.managerAdd')" min-width="120px" align="center">
         <template slot-scope="{row}">
           <span class="link-type">{{ row.ipmiadd }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.title')" min-width="120px"  align="center">
+      <el-table-column :label="$t('table.title')" min-width="120px" align="center">
         <template slot-scope="{row}">
           <span class="link-type">{{ row.title }}</span>
         </template>
@@ -134,17 +134,17 @@
         <el-form-item :label="$t('table.nodegateway')" prop="nodegate">
           <el-input v-model="temp.nodegate" />
         </el-form-item>
-        <el-form-item :label="$t('table.nodenetmask')" prop="nodemark" >
-          <el-input v-model="temp.nodemark" placeholder="255.255.255.0"/>
+        <el-form-item :label="$t('table.nodenetmask')" prop="nodemark">
+          <el-input v-model="temp.nodemark" placeholder="255.255.255.0" />
         </el-form-item>
         <!--<el-form-item :label="$t('table.managerAdd')" prop="ipmi">-->
-          <!--<el-input v-model="temp.ipmi" />-->
+        <!--<el-input v-model="temp.ipmi" />-->
         <!--</el-form-item>-->
         <!--<el-form-item :label="$t('table.ippass')" prop="ipmipass">-->
-          <!--<el-input v-model="temp.ipmipass" />-->
+        <!--<el-input v-model="temp.ipmipass" />-->
         <!--</el-form-item>-->
         <el-form-item :label="$t('table.title')" prop="title">
-          <el-input v-model="temp.title" placeholder="AA:BB:CC:DD:EE:FF"/>
+          <el-input v-model="temp.title" placeholder="AA:BB:CC:DD:EE:FF" />
         </el-form-item>
         <el-form-item :label="$t('table.remark')">
           <el-input v-model="temp.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="系统更换" />
@@ -154,7 +154,7 @@
         <el-button @click="dialogFormVisible = false">
           {{ $t('table.cancel') }}
         </el-button>
-        <el-button type="primary" v-loading.fullscreen.lock="fullscreenLoading" @click="dialogStatus==='create'?createData():updateData()">
+        <el-button v-loading.fullscreen.lock="fullscreenLoading" type="primary" @click="dialogStatus==='create'?createData():updateData()">
           {{ $t('table.confirm') }}
         </el-button>
       </div>
@@ -173,321 +173,321 @@
 </template>
 
 <script>
-  import { fetchList, fetchPv, createArticle, updateArticle,statustag } from '@/api/article'
-  import { validateIP,validateMAC,checkMask } from '@/api/datavalid'
-  import waves from '@/directive/waves' // waves directive
-  import { parseTime } from '@/utils'
-  import Pagination from '@/components/Pagination' // secondary package based on el-pagination
-  import moment from 'moment'
+import { fetchList, fetchPv, createArticle, updateArticle, statustag } from '@/api/article'
+import { validateIP, validateMAC, checkMask } from '@/api/datavalid'
+import waves from '@/directive/waves' // waves directive
+import { parseTime } from '@/utils'
+import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import moment from 'moment'
 
-  export default {
-    name: 'ComplexTable',
-    components: { Pagination },
-    directives: { waves },
-    filters: {
-      statusFilter(status) {
-        const statusMap = {
-          "成功": 'success',
-          "失败": 'danger',
-          "安装中": 'warning'
-        }
-        return statusMap[status]
-      },
-      typeFilter(type) {
-        return this.calendarTypeKeyValue[type]
-      },
-
-    },
-    data() {
-      return {
-        tableKey: 0,
-        list: null,
-        total: 0,
-        listLoading: true,
-        fullscreenLoading: false,
-        timer: '',
-        listQuery: {
-          page: 1,
-          limit: 20,
-          importance: undefined,
-          title: undefined,
-          type: undefined,
-          sort: '+id'
-        },
-        calendarTypeOptions: [
-          { key: 'CN', display_name: '中国' },
-          { key: 'US', display_name: 'USA' },
-          { key: 'JP', display_name: 'Japan' },
-          { key: 'EU', display_name: 'Eurozone' }
-        ],
-        importanceOptions: [1, 2, 3],
-        sortOptions: [{ label: '升序', key: '+id' }, { label: '降序', key: '-id' }],
-        statusOptions: ['成功', '失败', '删除'],
-        showReviewer: false,
-        temp: {
-          id: undefined,
-          importance: 1,
-          remark: '',
-          timestamp: moment().format('YYYY-MM-DD HH:mm:ss'),
-          title: '',
-          ipmi: '',
-          author: '',
-          nodegate: '',
-          nodemark: '',
-          ipmipass: '',
-          tempstat: '1',
-          nodeip: '',
-          type: '',
-          status: '安装中'
-        },
-        dialogFormVisible: false,
-        dialogStatus: '',
-        textMap: {
-          update: 'Edit',
-          create: '安装操作系统之前请联系IT部开通DHCP中继'
-        },
-        dialogPvVisible: false,
-        pvData: [],
-        rules: {
-          type: [{ required: true, message: 'type is required', trigger: 'change' }],
-          // timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-          title: [{ required: true, message: 'mac不能为空', trigger: 'blur' },{ validator: validateMAC, trigger: 'blur' },],
-          ipmi: [{ required: true, message: 'ipmi不能为空', trigger: 'blur' },{ validator: validateIP, trigger: 'blur' },],
-          ipmipass: [{ required: true, message: 'ipmi密码不能为空', trigger: 'blur' }],
-          nodeip: [{ required: true, message: '服务器ip不能为空', trigger: 'blur' },{ validator: validateIP, trigger: 'blur' },],
-          nodegate: [{ required: true, message: '服务器网关不能为空', trigger: 'blur' },{ validator: validateIP, trigger: 'blur' },],
-          nodemark: [{ required: true, message: '服务器掩码不能为空', trigger: 'blur' }]
-        },
-        downloadLoading: false
+export default {
+  name: 'ComplexTable',
+  components: { Pagination },
+  directives: { waves },
+  filters: {
+    statusFilter(status) {
+      const statusMap = {
+        '成功': 'success',
+        '失败': 'danger',
+        '安装中': 'warning'
       }
+      return statusMap[status]
     },
-    created() {
+    typeFilter(type) {
+      return this.calendarTypeKeyValue[type]
+    }
+
+  },
+  data() {
+    return {
+      tableKey: 0,
+      list: null,
+      total: 0,
+      listLoading: true,
+      fullscreenLoading: false,
+      timer: '',
+      listQuery: {
+        page: 1,
+        limit: 20,
+        importance: undefined,
+        title: undefined,
+        type: undefined,
+        sort: '+id'
+      },
+      calendarTypeOptions: [
+        { key: 'CN', display_name: '中国' },
+        { key: 'US', display_name: 'USA' },
+        { key: 'JP', display_name: 'Japan' },
+        { key: 'EU', display_name: 'Eurozone' }
+      ],
+      importanceOptions: [1, 2, 3],
+      sortOptions: [{ label: '升序', key: '+id' }, { label: '降序', key: '-id' }],
+      statusOptions: ['成功', '失败', '删除'],
+      showReviewer: false,
+      temp: {
+        id: undefined,
+        importance: 1,
+        remark: '',
+        timestamp: moment().format('YYYY-MM-DD HH:mm:ss'),
+        title: '',
+        ipmi: '',
+        author: '',
+        nodegate: '',
+        nodemark: '',
+        ipmipass: '',
+        tempstat: '1',
+        nodeip: '',
+        type: '',
+        status: '安装中'
+      },
+      dialogFormVisible: false,
+      dialogStatus: '',
+      textMap: {
+        update: 'Edit',
+        create: '安装操作系统之前请联系IT部开通DHCP中继'
+      },
+      dialogPvVisible: false,
+      pvData: [],
+      rules: {
+        type: [{ required: true, message: 'type is required', trigger: 'change' }],
+        // timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
+        title: [{ required: true, message: 'mac不能为空', trigger: 'blur' }, { validator: validateMAC, trigger: 'blur' }],
+        ipmi: [{ required: true, message: 'ipmi不能为空', trigger: 'blur' }, { validator: validateIP, trigger: 'blur' }],
+        ipmipass: [{ required: true, message: 'ipmi密码不能为空', trigger: 'blur' }],
+        nodeip: [{ required: true, message: '服务器ip不能为空', trigger: 'blur' }, { validator: validateIP, trigger: 'blur' }],
+        nodegate: [{ required: true, message: '服务器网关不能为空', trigger: 'blur' }, { validator: validateIP, trigger: 'blur' }],
+        nodemark: [{ required: true, message: '服务器掩码不能为空', trigger: 'blur' }]
+      },
+      downloadLoading: false
+    }
+  },
+  created() {
+    this.listQuery.page = 1
+    this.getList()
+    this.getCookie()
+  },
+  mounted() {
+    this.timer = setInterval(this.getList, 150000)
+    // this.timestamp = setInterval(new Date(), 1000);
+  },
+  beforeDestroy() {
+    clearInterval(this.timer)
+  },
+  methods: {
+    getCookie: function(cname) {
+      var name = cname + '='
+      var x = ''
+      var ca = document.cookie.split(';')
+      for (var i = 0; i < ca.length; i++) {
+        var c = ca[i]
+        x = c.split('=')[1]
+        while (c.charAt(0) == ' ') c = c.substring(1)
+        if (c.indexOf(name) != -1) {
+          return c.substring(name.length, c.length)
+        }
+      }
+      return x
+    },
+    calendarTypeKeyValue() {
+      return this.calendarTypeOptions.reduce((acc, cur) => {
+        acc[cur.key] = cur.display_name
+        return acc
+      }, {})
+    },
+    dateFormat(fmt, date) {
+      let ret = ''
+      date = new Date(date)
+      const opt = {
+        'Y+': date.getFullYear().toString(), // 年
+        'm+': (date.getMonth() + 1).toString(), // 月
+        'd+': date.getDate().toString(), // 日
+        'H+': date.getHours().toString(), // 时
+        'M+': date.getMinutes().toString(), // 分
+        'S+': date.getSeconds().toString() // 秒
+      }
+      for (const k in opt) {
+        ret = new RegExp('(' + k + ')').exec(fmt)
+        if (ret) {
+          fmt = fmt.replace(
+            ret[1],
+            ret[1].length == 1 ? opt[k] : opt[k].padStart(ret[1].length, '0')
+          )
+        }
+      }
+      return fmt
+    },
+    getList() {
+      this.listLoading = true
+      fetchList(this.listQuery).then(response => {
+        this.list = response.data.items
+        this.calendarTypeOptions = response.data.calendarTypeOptions
+        this.total = response.data.total
+        setTimeout(() => {
+          this.listLoading = false
+        }, 1.5 * 1000)
+      })
+    },
+    handleFilter() {
       this.listQuery.page = 1
       this.getList()
-      this.getCookie()
     },
-    methods: {
-      getCookie: function (cname) {
-        var name = cname + "=";
-        var x = '';
-        var ca = document.cookie.split(';');
-        for (var i = 0; i < ca.length; i++) {
-          var c = ca[i];
-          x = c.split('=')[1];
-          while (c.charAt(0) == ' ') c = c.substring(1);
-          if (c.indexOf(name) != -1){
-            return c.substring(name.length, c.length);
-          }
-        }
-        return x;
-      },
-      calendarTypeKeyValue (){
-        return this.calendarTypeOptions.reduce((acc, cur) => {
-          acc[cur.key] = cur.display_name
-          return acc
-        }, {})
-      },
-      dateFormat(fmt, date) {
-        let ret="";
-        date=new Date(date);
-        const opt = {
-          'Y+': date.getFullYear().toString(), // 年
-          'm+': (date.getMonth() + 1).toString(), // 月
-          'd+': date.getDate().toString(), // 日
-          'H+': date.getHours().toString(), // 时
-          'M+': date.getMinutes().toString(), // 分
-          'S+': date.getSeconds().toString() // 秒
-        }
-        for (let k in opt) {
-          ret = new RegExp('(' + k + ')').exec(fmt)
-          if (ret) {
-            fmt = fmt.replace(
-              ret[1],
-              ret[1].length == 1 ? opt[k] : opt[k].padStart(ret[1].length, '0')
-            )
-          }
-        }
-        return fmt
-      },
-      getList() {
-        this.listLoading = true
-        fetchList(this.listQuery).then(response => {
-          this.list = response.data.items
-          this.calendarTypeOptions = response.data.calendarTypeOptions
-          this.total = response.data.total
-          setTimeout(() => {
-            this.listLoading = false
-          }, 1.5 * 1000)
-        })
-      },
-      handleFilter() {
-        this.listQuery.page = 1;
-        this.getList()
-      },
-      handleStag() {
-        this.resetTemp();
-        this.temp.tempstat = 5
-      },
-      handleData(paramId,NodeIP) {
-        this.handleStag();
-        this.temp.id = paramId;
-        this.temp.nodeip = NodeIP;
-        statustag(this.temp).then(() => {
-          this.list.unshift(this.temp);
-          this.dialogFormVisible = false;
-          this.$notify({
-            message: '已经标记为失败',
-            type: 'info',
-            // duration: 2000
-          });
-          this.getList();
-        })
-      },
-      // handleModifyStatus(row, status) {
-      //   this.$message({
-      //     message: '操作成功',
-      //     type: 'success'
-      //   })
-      //   // row.status = status
-      // },
-      sortChange(data) {
-        const { prop, order } = data
-        if (prop === 'id') {
-          this.sortByID(order)
-        }
-      },
-      sortByID(order) {
-        if (order === 'ascending') {
-          this.listQuery.sort = '+id'
-        } else {
-          this.listQuery.sort = '-id'
-        }
-        this.handleFilter()
-      },
-      resetTemp() {
-        this.temp = {
-          id: undefined,
-          importance: 1,
-          remark: '',
-          timestamp: new Date(),
-          title: '',
-          status: '1',
-          type: ''
-        }
-      },
-      handleCreate() {
-        this.resetTemp()
-        this.dialogStatus = 'create'
-        this.dialogFormVisible = true
-        this.$nextTick(() => {
-          this.$refs['dataForm'].clearValidate()
-        })
-      },
-      createData() {
-        this.fullscreenLoading = true;
-        this.$refs['dataForm'].validate((valid) => {
-          if (valid) {
-            this.temp.author = this.getCookie();
-            console.log(this.temp.author)
-            createArticle(this.temp).then(() => {
-              // console.log(this.temp)
-              this.list.unshift(this.temp)
-              this.dialogFormVisible = false
-              this.$notify({
-                title: '成功',
-                message: '创建成功',
-                type: 'success',
-                duration: 2000
-              })
-              setTimeout(() => {
-                this.fullscreenLoading = false
-              }, 1.5 * 1000);
-              this.getList();
-            }).catch(err => {
-              console.log(err)
-              this.fullscreenLoading = false
-            });
-          }
-        })
-      },
-      // handleUpdate(row) {
-      //   this.temp = Object.assign({}, row) // copy obj
-      //   this.temp.timestamp = new Date(this.temp.timestamp)
-      //   this.dialogStatus = 'update'
-      //   this.dialogFormVisible = true
-      //   this.$nextTick(() => {
-      //     this.$refs['dataForm'].clearValidate()
-      //   })
-      // },
-      updateData() {
-        this.$refs['dataForm'].validate((valid) => {
-          if (valid) {
-            const tempData = Object.assign({}, this.temp)
-            tempData.timestamp = +new Date(tempData.timestamp)
-            updateArticle(tempData).then(() => {
-              const index = this.list.findIndex(v => v.id === this.temp.id)
-              this.list.splice(index, 1, this.temp)
-              this.dialogFormVisible = false
-              this.$notify({
-                title: '成功',
-                message: '更新成功',
-                type: 'success',
-                duration: 2000
-              })
-            })
-          }
-        })
-      },
-      handleDelete(row, index) {
+    handleStag() {
+      this.resetTemp()
+      this.temp.tempstat = 5
+    },
+    handleData(paramId, NodeIP) {
+      this.handleStag()
+      this.temp.id = paramId
+      this.temp.nodeip = NodeIP
+      statustag(this.temp).then(() => {
+        this.list.unshift(this.temp)
+        this.dialogFormVisible = false
         this.$notify({
-          title: '成功',
-          message: '删除成功',
-          type: 'success',
-          duration: 2000
+          message: '已经标记为失败',
+          type: 'info'
+          // duration: 2000
         })
-        this.list.splice(index, 1)
-      },
-      handleFetchPv(pv) {
-        fetchPv(pv).then(response => {
-          this.pvData = response.data.pvData
-          this.dialogPvVisible = true
-        })
-      },
-      handleDownload() {
-        this.downloadLoading = true
-        import('@/vendor/Export2Excel').then(excel => {
-          const tHeader = ['timestamp', 'nodeip', 'ipmiadd', 'title', 'versions','author']
-          // const filterVal = ['timestamp', 'nodeip', 'ipmiadd', 'title', 'versions','author']
-          const filterVal = ['timestamp', 'nodeip', 'ipmiadd', 'title', 'versions','author']
-          const data = this.formatJson(filterVal)
-          excel.export_json_to_excel({
-            header: tHeader,
-            data,
-            filename: 'table-list'
-          })
-          this.downloadLoading = false
-        })
-      },
-      formatJson(filterVal) {
-        return this.list.map(v => filterVal.map(j => {
-          if (j === 'timestamp') {
-            return parseTime(v[j])
-          } else {
-            return v[j]
-          }
-        }))
-      },
-      getSortClass: function(key) {
-        const sort = this.listQuery.sort
-        return sort === `+${key}` ? 'ascending' : 'descending'
+        this.getList()
+      })
+    },
+    // handleModifyStatus(row, status) {
+    //   this.$message({
+    //     message: '操作成功',
+    //     type: 'success'
+    //   })
+    //   // row.status = status
+    // },
+    sortChange(data) {
+      const { prop, order } = data
+      if (prop === 'id') {
+        this.sortByID(order)
       }
     },
-    mounted() {
-      this.timer = setInterval(this.getList, 150000);
-      // this.timestamp = setInterval(new Date(), 1000);
+    sortByID(order) {
+      if (order === 'ascending') {
+        this.listQuery.sort = '+id'
+      } else {
+        this.listQuery.sort = '-id'
+      }
+      this.handleFilter()
     },
-    beforeDestroy() {
-      clearInterval(this.timer);
+    resetTemp() {
+      this.temp = {
+        id: undefined,
+        importance: 1,
+        remark: '',
+        timestamp: new Date(),
+        title: '',
+        status: '1',
+        type: ''
+      }
+    },
+    handleCreate() {
+      this.resetTemp()
+      this.dialogStatus = 'create'
+      this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
+    createData() {
+      this.fullscreenLoading = true
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          this.temp.author = this.getCookie()
+          console.log(this.temp.author)
+          createArticle(this.temp).then(() => {
+            // console.log(this.temp)
+            this.list.unshift(this.temp)
+            this.dialogFormVisible = false
+            this.$notify({
+              title: '成功',
+              message: '创建成功',
+              type: 'success',
+              duration: 2000
+            })
+            setTimeout(() => {
+              this.fullscreenLoading = false
+            }, 1.5 * 1000)
+            this.getList()
+          }).catch(err => {
+            console.log(err)
+            this.fullscreenLoading = false
+          })
+        }
+      })
+    },
+    // handleUpdate(row) {
+    //   this.temp = Object.assign({}, row) // copy obj
+    //   this.temp.timestamp = new Date(this.temp.timestamp)
+    //   this.dialogStatus = 'update'
+    //   this.dialogFormVisible = true
+    //   this.$nextTick(() => {
+    //     this.$refs['dataForm'].clearValidate()
+    //   })
+    // },
+    updateData() {
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          const tempData = Object.assign({}, this.temp)
+          tempData.timestamp = +new Date(tempData.timestamp)
+          updateArticle(tempData).then(() => {
+            const index = this.list.findIndex(v => v.id === this.temp.id)
+            this.list.splice(index, 1, this.temp)
+            this.dialogFormVisible = false
+            this.$notify({
+              title: '成功',
+              message: '更新成功',
+              type: 'success',
+              duration: 2000
+            })
+          })
+        }
+      })
+    },
+    handleDelete(row, index) {
+      this.$notify({
+        title: '成功',
+        message: '删除成功',
+        type: 'success',
+        duration: 2000
+      })
+      this.list.splice(index, 1)
+    },
+    handleFetchPv(pv) {
+      fetchPv(pv).then(response => {
+        this.pvData = response.data.pvData
+        this.dialogPvVisible = true
+      })
+    },
+    handleDownload() {
+      this.downloadLoading = true
+      import('@/vendor/Export2Excel').then(excel => {
+        const tHeader = ['timestamp', 'nodeip', 'ipmiadd', 'title', 'versions', 'author']
+        // const filterVal = ['timestamp', 'nodeip', 'ipmiadd', 'title', 'versions','author']
+        const filterVal = ['timestamp', 'nodeip', 'ipmiadd', 'title', 'versions', 'author']
+        const data = this.formatJson(filterVal)
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: 'table-list'
+        })
+        this.downloadLoading = false
+      })
+    },
+    formatJson(filterVal) {
+      return this.list.map(v => filterVal.map(j => {
+        if (j === 'timestamp') {
+          return parseTime(v[j])
+        } else {
+          return v[j]
+        }
+      }))
+    },
+    getSortClass: function(key) {
+      const sort = this.listQuery.sort
+      return sort === `+${key}` ? 'ascending' : 'descending'
     }
   }
+}
 </script>
